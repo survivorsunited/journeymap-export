@@ -1,0 +1,129 @@
+# Group: waystones
+
+/waypoint create "[waystones] Arkadi's Ship" minecraft:overworld 0 64 0 -14366279
+/waypoint create "[waystones] Azakairure" minecraft:overworld 0 64 0 -12344421
+/waypoint create "[waystones] Azakarkmur" minecraft:overworld 0 64 0 -4440820
+/waypoint create "[waystones] Brelorid" minecraft:overworld 0 64 0 -12374127
+/waypoint create "[waystones] Caredmur" minecraft:overworld 0 64 0 -1831643
+/waypoint create "[waystones] Croirtron" minecraft:overworld 0 64 0 -16586731
+/waypoint create "[waystones] Crumiure" minecraft:overworld 0 64 0 -10209239
+/waypoint create "[waystones] Drakmaraces" minecraft:overworld 0 64 0 -6586819
+/waypoint create "[waystones] Drakmaracmur" minecraft:overworld 0 64 0 -7039599
+/waypoint create "[waystones] Farm - Basic" minecraft:overworld 0 64 0 -668065
+/waypoint create "[waystones] Farm - Berries" minecraft:overworld 0 64 0 -10127040
+/waypoint create "[waystones] Farm - Blaze" minecraft:overworld 0 64 0 -5350035
+/waypoint create "[waystones] Farm - Creeper" minecraft:overworld 0 64 0 -6177245
+/waypoint create "[waystones] Farm - District" minecraft:overworld 0 64 0 -9983358
+/waypoint create "[waystones] Farm - Enderman" minecraft:overworld 0 64 0 -4513643
+/waypoint create "[waystones] Farm - Gold AFK" minecraft:overworld 0 64 0 -3815642
+/waypoint create "[waystones] Farm - Gold" minecraft:overworld 0 64 0 -10515626
+/waypoint create "[waystones] Farm - Iron AFK" minecraft:overworld 0 64 0 -5432908
+/waypoint create "[waystones] Farm - Music Disk" minecraft:overworld 0 64 0 -3524062
+/waypoint create "[waystones] Farm - Shulker" minecraft:overworld 0 64 0 -7715734
+/waypoint create "[waystones] Home" minecraft:overworld 0 64 0 -5096371
+/waypoint create "[waystones] Madmurer" minecraft:overworld 0 64 0 -6065213
+/waypoint create "[waystones] Mjolmurmur" minecraft:overworld 0 64 0 -9711759
+/waypoint create "[waystones] Morzertron" minecraft:overworld 0 64 0 -8665793
+/waypoint create "[waystones] Nether Fortres Alpha" minecraft:overworld 0 64 0 -12743750
+/waypoint create "[waystones] Pirate Ship" minecraft:overworld 0 64 0 -13120495
+/waypoint create "[waystones] Reiredd" minecraft:overworld 0 64 0 -15093221
+/waypoint create "[waystones] Reisalmared" minecraft:overworld 0 64 0 -13135278
+/waypoint create "[waystones] Tree House" minecraft:overworld 0 64 0 -4315510
+/waypoint create "[waystones] Zedmurmur" minecraft:overworld 0 64 0 -13007291
+/waypoint create "[waystones] Zurzoird" minecraft:overworld 0 64 0 -2916331
+
+# Group: Farm
+
+/waypoint create "[Farm] Blaze 1" minecraft:overworld 0 64 0 -10055783
+/waypoint create "[Farm] Creeper Farm AFK" minecraft:overworld 0 64 0 -15525531
+/waypoint create "[Farm] Creeper Farm Store" minecraft:overworld 0 64 0 -11591836
+/waypoint create "[Farm] Enderman Farm 1" minecraft:overworld 0 64 0 -2111183
+/waypoint create "[Farm] Food Fram AFK" minecraft:overworld 0 64 0 -15122572
+/waypoint create "[Farm] Gold Farm AFK" minecraft:overworld 0 64 0 -7687642
+/waypoint create "[Farm] Gold Fram Storage" minecraft:overworld 0 64 0 -4871542
+/waypoint create "[Farm] Iron Farm AFK" minecraft:overworld 0 64 0 -9631186
+/waypoint create "[Farm] Music Disc Farm AFK" minecraft:overworld 0 64 0 -6184174
+/waypoint create "[Farm] Music Disc Farm" minecraft:overworld 0 64 0 -1692796
+/waypoint create "[Farm] Ocean 1" minecraft:overworld 0 64 0 -6869485
+/waypoint create "[Farm] Raid Farm 2 - Sky" minecraft:overworld 0 64 0 -13732565
+/waypoint create "[Farm] Raid Farm" minecraft:overworld 0 64 0 -3841420
+/waypoint create "[Farm] Shaulker Farm AFK" minecraft:overworld 0 64 0 -8039899
+/waypoint create "[Farm] Shaulker Farm Store" minecraft:overworld 0 64 0 -1123946
+/waypoint create "[Farm] Shaulker Farm" minecraft:overworld 0 64 0 -5477906
+/waypoint create "[Farm] Shugar Cane" minecraft:overworld 0 64 0 -5238886
+/waypoint create "[Farm] W Roze" minecraft:overworld 0 64 0 -4383959
+
+# Group: Trial
+
+/waypoint create "[Trial] Blaze Farm 2" minecraft:overworld 0 64 0 -3618746
+/waypoint create "[Trial] Blaze Farm" minecraft:overworld 0 64 0 -4572554
+/waypoint create "[Trial] Nether" minecraft:overworld 0 64 0 -391002
+/waypoint create "[Trial] Trial Chaimber 2" minecraft:overworld 0 64 0 -11891135
+/waypoint create "[Trial] Trial Chamber 1" minecraft:overworld 0 64 0 -5238115
+/waypoint create "[Trial] Trial Chamber 3" minecraft:overworld 0 64 0 -9543369
+
+# Group: The End
+
+/waypoint create "[The End] Base 1" minecraft:overworld 0 64 0 -13999088
+/waypoint create "[The End] End Gate" minecraft:overworld 0 64 0 -4791471
+/waypoint create "[The End] Far" minecraft:overworld 0 64 0 -12282542
+/waypoint create "[The End] Portal 2?" minecraft:overworld 0 64 0 -4472826
+/waypoint create "[The End] Roof" minecraft:overworld 0 64 0 -5789971
+/waypoint create "[The End] The End Island" minecraft:overworld 0 64 0 -13039874
+
+# Group: mining
+
+/waypoint create "[mining] Coal" minecraft:overworld 0 64 0 -1480497
+/waypoint create "[mining] Min3" minecraft:overworld 0 64 0 -4798823
+/waypoint create "[mining] Mine Cache" minecraft:overworld 0 64 0 -14009638
+/waypoint create "[mining] Mine1" minecraft:overworld 0 64 0 -5405037
+/waypoint create "[mining] Mine2" minecraft:overworld 0 64 0 -613430
+/waypoint create "[mining] Mine4" minecraft:overworld 0 64 0 -1831807
+/waypoint create "[mining] scrap1" minecraft:overworld 0 64 0 -6592810
+/waypoint create "[mining] srap2" minecraft:overworld 0 64 0 -12981618
+/waypoint create "[mining] strip mine" minecraft:overworld 0 64 0 -12344512
+
+# Group: Strong Hold
+
+/waypoint create "[Strong Hold] Ender Portal" minecraft:overworld 0 64 0 -15899607
+/waypoint create "[Strong Hold] Strong Hold2" minecraft:overworld 0 64 0 -8149955
+
+# Group: Exploring
+
+/waypoint create "[Exploring] Cave 1" minecraft:overworld 0 64 0 -12350463
+/waypoint create "[Exploring] Far 2" minecraft:overworld 0 64 0 -16452857
+/waypoint create "[Exploring] Far1" minecraft:overworld 0 64 0 -7270321
+/waypoint create "[Exploring] Icebergs" minecraft:overworld 0 64 0 -3348668
+/waypoint create "[Exploring] Pale Oak Forest Cave" minecraft:overworld 0 64 0 -10208986
+/waypoint create "[Exploring] Pirate Ship" minecraft:overworld 0 64 0 -16016454
+/waypoint create "[Exploring] Porta 1" minecraft:overworld 0 64 0 -5526151
+/waypoint create "[Exploring] Portal A" minecraft:overworld 0 64 0 -1516881
+/waypoint create "[Exploring] Portal" minecraft:overworld 0 64 0 -14326691
+/waypoint create "[Exploring] Tall Mountain" minecraft:overworld 0 64 0 -6387571
+/waypoint create "[Exploring] Wood Hut" minecraft:overworld 0 64 0 -15930978
+
+# Group: Camp
+
+/waypoint create "[Camp] Store" minecraft:overworld 0 64 0 -10219478
+/waypoint create "[Camp] Tree House" minecraft:overworld 0 64 0 -10443855
+
+# Group: Water Temple
+
+/waypoint create "[Water Temple] Template 2" minecraft:overworld 0 64 0 -10240446
+/waypoint create "[Water Temple] Temple 1" minecraft:overworld 0 64 0 -7760946
+
+# Group: Ancient City
+
+/waypoint create "[Ancient City] Acient City 3" minecraft:overworld 0 64 0 -2316853
+/waypoint create "[Ancient City] Acient City" minecraft:overworld 0 64 0 -9376017
+/waypoint create "[Ancient City] Ancient City 2" minecraft:overworld 0 64 0 -4066266
+/waypoint create "[Ancient City] Ancient City 4" minecraft:overworld 0 64 0 -11965904
+
+# Group: Cave
+
+/waypoint create "[Cave] Caves" minecraft:overworld 0 64 0 -4427469
+
+# Group: Arki
+
+/waypoint create "[Arki] Ship" minecraft:overworld 0 64 0 -8183542
+
