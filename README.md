@@ -14,13 +14,52 @@ System groups (`journeymap_temp`, `journeymap_death`, `journeymap_all`, `journey
 
 ## Features
 
-- Works standalone, no Minecraft or JourneyMap running
-- Supports multiple formats: raw NBT, gzip, zip, zlib
-- Groups your waypoints by group name
-- Generates `/waypoint create` commands to reimport easily
-- Includes a PowerShell watcher script that automatically re-dumps on updates
-- Auto-discovers all server worlds under `.minecraft/journeymap/data/mp/`
-- Creates per-server export folders automatically
+- **Standalone operation**: No Minecraft or JourneyMap dependencies required
+- **Multiple compression formats**: Supports raw NBT, GZIP, ZIP, and ZLIB compression
+- **Smart group handling**: 
+  - Converts group names to title case (e.g., "my_group" → "My Group")
+  - Preserves existing waypoint prefixes (e.g., "[Farm] Wheat Field")
+  - Uses "Global" as default group for waypoints without groups
+- **Selective coordinate offsets**: 
+  - Applies Y-3 and Z-1 offsets only to "Waystones" group waypoints
+  - Other waypoint groups maintain original coordinates
+- **Multiple export formats**:
+  - `waypoints.json` — Complete NBT data as structured JSON
+  - `waypoints.csv` — Tabular data for spreadsheet analysis
+  - `create_waypoints.txt` — Ready-to-use JourneyMap commands
+- **Intelligent command generation**:
+  - Groups commands by waypoint group
+  - Sorts waypoints alphabetically within each group
+  - Includes proper color mapping and dimension handling
+- **Automation tools**:
+  - PowerShell watcher script for continuous export
+  - Auto-discovery of all server worlds
+  - Automatic per-server export folder creation
+
+---
+
+## Configuration
+
+The tool includes several configurable constants at the top of `WaypointDataDump.java`:
+
+```java
+// Target player for generated commands (empty = command runner)
+private static final String DEFAULT_PLAYER = "MrWild0ne";
+
+// Default group for waypoints without a group
+private static final String DEFAULT_GROUP_ID = "Global";
+
+// Coordinate offsets (applied only to Waystones group)
+private static final int Y_OFFSET = -3;  // Y coordinate adjustment
+private static final int Z_OFFSET = -1;  // Z coordinate adjustment
+```
+
+### Customization Examples
+
+- **Change target player**: Set `DEFAULT_PLAYER` to your Minecraft username
+- **Change default group**: Modify `DEFAULT_GROUP_ID` to your preferred group name
+- **Adjust waystone positions**: Modify `Y_OFFSET` and `Z_OFFSET` for fine-tuning waystone placement
+- **Disable offsets**: Set both offsets to `0` to disable coordinate adjustments
 
 ---
 
@@ -87,23 +126,41 @@ Default behavior:
 ### create_waypoints.txt
 
 ```text
-# Group: Camp
+# Group: Farm
 
-/waypoint create "[Camp] Nether Fortress Alpha" minecraft:overworld 0 64 0 -12743750
-/waypoint create "[Camp] Farm - Music Disk" minecraft:overworld 0 64 0 -3524062
-/waypoint create "[Camp] Farm - District" minecraft:overworld 0 64 0 -9983358
-/waypoint create "[Camp] Farm - Basic" minecraft:overworld 0 64 0 -668065
+waypoint create "[Farm] Wheat Field" minecraft:overworld 100 67 200 white MrWild0ne
+waypoint create "[Farm] Animal Pen" minecraft:overworld 150 64 250 green MrWild0ne
+
+# Group: Waystones
+
+waypoint create "[Waystones] Village Stone" minecraft:overworld 200 61 300 blue MrWild0ne
+waypoint create "[Waystones] Nether Portal" minecraft:the_nether 50 58 75 red MrWild0ne
+
+# Group: Global
+
+waypoint create "[Global] Spawn Point" minecraft:overworld 0 64 0 yellow MrWild0ne
 ```
+
+### Key Features Demonstrated
+
+- **Title case group names**: "farm" → "Farm", "waystones" → "Waystones"
+- **Selective coordinate offsets**: Waystones have Y-3 and Z-1 applied (200,64,300 → 200,61,299)
+- **Preserved prefixes**: Existing "[Farm]" prefixes are maintained
+- **Default group**: Waypoints without groups get "Global" prefix
+- **Color mapping**: RGB values converted to named colors (white, green, blue, red, yellow)
 
 ---
 
 ## Notes
 
-- Groups are taken from JourneyMap’s saved data.  
-- System groups (`journeymap_temp`, `journeymap_death`, etc.) are ignored.  
-- Dimensions are exported as stored (e.g. `minecraft:overworld`, `minecraft:the_nether`).  
-- Colors are exported as either named strings or integer RGB values.  
-- `run.ps1` works with **multiple servers** at once.  
+- **Group handling**: Groups are taken from JourneyMap's saved data and converted to title case
+- **System groups**: `journeymap_temp`, `journeymap_death`, `journeymap_all`, `journeymap_default` are automatically filtered out
+- **Coordinate offsets**: Only applied to "Waystones" group waypoints (Y-3, Z-1 by default)
+- **Prefix preservation**: Waypoints with existing prefixes (e.g., "[Farm]") keep their original names
+- **Default grouping**: Waypoints without groups are assigned to "Global" group
+- **Color mapping**: RGB values are converted to nearest named colors for better readability
+- **Dimensions**: Exported as stored (e.g. `minecraft:overworld`, `minecraft:the_nether`)
+- **Multi-server support**: `run.ps1` automatically handles multiple servers simultaneously  
 
 ---
 

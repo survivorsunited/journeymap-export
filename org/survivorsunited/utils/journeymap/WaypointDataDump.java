@@ -14,9 +14,28 @@ import java.util.Map;
  * Standalone NBT dumper for JourneyMap WaypointData.dat (ZIP/GZIP/ZLIB/raw NBT).
  * No Minecraft/JourneyMap deps required.
  *
+ * Features:
+ * - Supports multiple compression formats (ZIP, GZIP, ZLIB, raw NBT)
+ * - Exports to JSON, CSV, and waypoint creation commands
+ * - Configurable coordinate offsets (applied only to Waystones group)
+ * - Smart group name handling with title case conversion
+ * - Preserves existing waypoint prefixes
+ * - Filters out system groups (journeymap_temp, journeymap_death, etc.)
+ *
+ * Configuration Constants:
+ * - DEFAULT_PLAYER: Target player for commands (default: "MrWild0ne")
+ * - DEFAULT_GROUP_ID: Default group for waypoints without group (default: "Global")
+ * - Y_OFFSET: Y coordinate offset for Waystones group (default: -3)
+ * - Z_OFFSET: Z coordinate offset for Waystones group (default: -1)
+ *
  * Usage:
  *   javac -d out org/survivorsunited.utils/journeymap/WaypointDataDump.java
  *   java -cp out org.survivorsunited.utils.journeymap.WaypointDataDump "C:\path\WaypointData.dat" --out export
+ *
+ * Output Files:
+ * - waypoints.json: Complete NBT data as JSON
+ * - waypoints.csv: Structured waypoint data in CSV format
+ * - create_waypoints.txt: JourneyMap commands grouped by waypoint group
  */
 public class WaypointDataDump {
 
@@ -174,6 +193,19 @@ public class WaypointDataDump {
         return bestName;
     }
     
+    /**
+     * Converts a string to title case (first letter of each word capitalized).
+     * Handles separators like spaces, underscores, and hyphens.
+     * 
+     * Examples:
+     * - "waystones" → "Waystones"
+     * - "my_group" → "My Group"
+     * - "underground-bases" → "Underground Bases"
+     * - "journeymap_default" → "Journeymap Default"
+     * 
+     * @param str The string to convert to title case
+     * @return The title-cased string, or original string if null/empty
+     */
     private static String toTitleCase(String str) {
         if (str == null || str.isEmpty()) return str;
         
@@ -640,10 +672,11 @@ public class WaypointDataDump {
                 int baseY = getCoordInt(wp, "y", 64);
                 int baseZ = getCoordInt(wp, "z", 0);
                 
-                // Apply offsets only for Waystones group
+                // Apply coordinate offsets only for Waystones group
+                // This allows for fine-tuning waystone positions without affecting other waypoints
                 if ("waystones".equalsIgnoreCase(titleCaseGroup)) {
-                    baseY += Y_OFFSET;
-                    baseZ += Z_OFFSET;
+                    baseY += Y_OFFSET;  // Default: -3
+                    baseZ += Z_OFFSET;   // Default: -1
                 }
                 
                 String x = String.valueOf(baseX);
@@ -663,13 +696,13 @@ public class WaypointDataDump {
                     colorName = "white";
                 }
                 
-                // build command
+                // build command with smart prefix handling
                 String prefixedName;
                 if (name.startsWith("[") && name.contains("]")) {
-                    // Waypoint already has a prefix, use it as-is
+                    // Waypoint already has a prefix (e.g., "[Farm] Wheat Field"), use it as-is
                     prefixedName = name.replace("\"", "\\\"");
                 } else {
-                    // Add group prefix
+                    // Add group prefix (e.g., "Wheat Field" → "[Farm] Wheat Field")
                     prefixedName = ("[" + titleCaseGroup + "] " + name).replace("\"", "\\\"");
                 }
                 String player = DEFAULT_PLAYER; // "" = whoever runs the command
