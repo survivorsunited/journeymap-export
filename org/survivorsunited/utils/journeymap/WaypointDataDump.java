@@ -8,6 +8,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.Map;
 
 /**
  * Standalone NBT dumper for JourneyMap WaypointData.dat (ZIP/GZIP/ZLIB/raw NBT).
@@ -18,6 +19,39 @@ import java.util.zip.ZipInputStream;
  *   java -cp out org.survivorsunited.utils.journeymap.WaypointDataDump "C:\path\WaypointData.dat" --out export
  */
 public class WaypointDataDump {
+
+    // Simplified named colors for /waypoint create
+    private static final Map<String,Integer> NAMED_COLORS = Map.ofEntries(
+        Map.entry("black",       0x000000),
+        Map.entry("dark_blue",   0x0000AA),
+        Map.entry("dark_green",  0x00AA00),
+        Map.entry("dark_aqua",   0x00AAAA),
+        Map.entry("dark_red",    0xAA0000),
+        Map.entry("dark_purple", 0xAA00AA),
+        Map.entry("gold",        0xFFAA00),
+        Map.entry("gray",        0xAAAAAA),
+        Map.entry("dark_gray",   0x555555),
+        Map.entry("blue",        0x5555FF),
+        Map.entry("green",       0x55FF55),
+        Map.entry("aqua",        0x55FFFF),
+        Map.entry("red",         0xFF5555),
+        Map.entry("light_purple",0xFF55FF),
+        Map.entry("yellow",      0xFFFF55),
+        Map.entry("white",       0xFFFFFF)
+    );
+
+    // Quick lookup for valid names
+    private static final Set<String> ALLOWED_COLOR_NAMES = new HashSet<>(NAMED_COLORS.keySet());
+
+    // Optional: set a default player to append to commands; leave "" to target the runner
+    private static final String DEFAULT_PLAYER = "MrWild0ne";
+    
+    // Default group ID for waypoints without a group
+    private static final String DEFAULT_GROUP_ID = "Global";
+    
+    // Coordinate offsets for waypoint creation commands
+    private static final int Z_OFFSET = -1;
+    private static final int Y_OFFSET = -3;
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -74,6 +108,95 @@ public class WaypointDataDump {
             System.exit(1);
         }
     }
+
+    // --- POS helpers: prefer pos.{x,y,z}, fallback to top-level x/y/z ---
+    private static Integer getCoordInt(NbtElement wp, String key, Integer def) {
+        // 1) direct (top-level)
+        NbtElement ch = getChild(wp, key);
+        if (ch != null && ch.value instanceof Number n) return n.intValue();
+
+        // 2) pos.{key}
+        NbtElement pos = getCompoundChild(wp, "pos");
+        if (pos != null) {
+            NbtElement ch2 = getChild(pos, key);
+            if (ch2 != null && ch2.value instanceof Number n2) return n2.intValue();
+        }
+        return def;
+    }
+
+    private static String normalizeColorName(String s) {
+        if (s == null) return null;
+        String t = s.trim().toLowerCase(Locale.ROOT).replace(' ', '_');
+        return ALLOWED_COLOR_NAMES.contains(t) ? t : null;
+    }
+    
+    private static String mapColor(Object colorVal) {
+        if (colorVal == null) return "white";
+        // If string, try to accept a valid name or parse numeric
+        if (colorVal instanceof String str) {
+            String named = normalizeColorName(str);
+            if (named != null) return named;
+    
+            try {
+                // allow "#RRGGBB"
+                if (str.startsWith("#") && str.length() == 7) {
+                    int rgb = Integer.parseInt(str.substring(1), 16) & 0xFFFFFF;
+                    return nearestNamed(rgb);
+                }
+                // allow decimal int in string
+                int rgb = Integer.parseInt(str);
+                return nearestNamed(rgb & 0xFFFFFF);
+            } catch (Exception ignored) {
+                return "white";
+            }
+        }
+        if (colorVal instanceof Number n) {
+            int rgb = n.intValue() & 0xFFFFFF; // strip alpha if present
+            return nearestNamed(rgb);
+        }
+        return "white";
+    }
+    
+    private static String nearestNamed(int rgb) {
+        String bestName = "white";
+        long bestDist = Long.MAX_VALUE;
+        int r = (rgb >> 16) & 0xFF, g = (rgb >> 8) & 0xFF, b = rgb & 0xFF;
+        for (Map.Entry<String,Integer> e : NAMED_COLORS.entrySet()) {
+            int c = e.getValue();
+            int cr = (c >> 16) & 0xFF, cg = (c >> 8) & 0xFF, cb = c & 0xFF;
+            int dr = r - cr, dg = g - cg, db = b - cb;
+            long dist = (long)dr*dr + (long)dg*dg + (long)db*db;
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestName = e.getKey();
+            }
+        }
+        return bestName;
+    }
+    
+    private static String toTitleCase(String str) {
+        if (str == null || str.isEmpty()) return str;
+        
+        StringBuilder result = new StringBuilder();
+        boolean capitalizeNext = true;
+        
+        for (char c : str.toCharArray()) {
+            if (Character.isWhitespace(c) || c == '_' || c == '-') {
+                result.append(c);
+                capitalizeNext = true;
+            } else {
+                if (capitalizeNext) {
+                    result.append(Character.toUpperCase(c));
+                    capitalizeNext = false;
+                } else {
+                    result.append(Character.toLowerCase(c));
+                }
+            }
+        }
+        
+        return result.toString();
+    }
+
 
     // --- load zip/gzip/zlib/raw ---
     private static byte[] loadPossiblyCompressed(Path p) throws IOException {
@@ -362,7 +485,8 @@ public class WaypointDataDump {
                             Map<String,Object> row = toRow(wm);
                             if (row.get("guid") == null) row.put("guid", String.valueOf(we.getKey()));
                             if (!row.containsKey("groupId") || row.get("groupId") == null) {
-                                row.put("groupId", first(gmap, "id","groupId","name","label", "key"));
+                                Object groupId = first(gmap, "id","groupId","name","label", "key");
+                                row.put("groupId", groupId != null ? groupId : DEFAULT_GROUP_ID);
                             }
                             rows.add(row);
                             wpCount++;
@@ -427,16 +551,37 @@ public class WaypointDataDump {
         }
 
         static boolean looksLikeWaypoint(Map<String,Object> m) {
-            return m.containsKey("x") && m.containsKey("y") && m.containsKey("z");
+            // direct x/y/z
+            boolean direct = m.containsKey("x") && m.containsKey("y") && m.containsKey("z");
+            if (direct) return true;
+            // pos.{x,y,z}
+            Object pos = m.get("pos");
+            if (pos instanceof Map<?,?> pm) {
+                return ((Map<?,?>)pm).containsKey("x") && ((Map<?,?>)pm).containsKey("y") && ((Map<?,?>)pm).containsKey("z");
+            }
+            return false;
         }
 
+        @SuppressWarnings("unchecked")
         static Map<String,Object> toRow(Map<String,Object> m) {
             Map<String,Object> r = new LinkedHashMap<>();
             r.put("guid", first(m, "guid","id","uuid","key"));
             r.put("name", first(m, "name","label","title"));
-            r.put("groupId", first(m, "groupId","group","grp"));
+            Object groupId = first(m, "groupId","group","grp");
+            r.put("groupId", groupId != null ? groupId : DEFAULT_GROUP_ID);
             r.put("primaryDimension", first(m, "primaryDimension","dimension","dim","primaryDim"));
-            r.put("x", m.get("x")); r.put("y", m.get("y")); r.put("z", m.get("z"));
+
+            Object x = m.get("x"), y = m.get("y"), z = m.get("z");
+            if (x == null || y == null || z == null) {
+                Object pos = m.get("pos");
+                if (pos instanceof Map<?,?> pm) {
+                    if (x == null) x = ((Map<?,?>)pm).get("x");
+                    if (y == null) y = ((Map<?,?>)pm).get("y");
+                    if (z == null) z = ((Map<?,?>)pm).get("z");
+                }
+            }
+            r.put("x", x); r.put("y", y); r.put("z", z);
+
             r.put("enabled", first(m, "enabled","isEnabled"));
             r.put("persistent", first(m, "persistent","isPersistent","save"));
             r.put("color", first(m, "color","colour","rgb"));
@@ -444,7 +589,7 @@ public class WaypointDataDump {
             r.put("note", first(m, "note","description","desc"));
             return r;
         }
-
+        
         static Object first(Map<String,Object> m, String... keys) {
             for (String k : keys) if (m.containsKey(k)) return m.get(k);
             return null;
@@ -460,7 +605,7 @@ public class WaypointDataDump {
             "journeymap_temp", "journeymap_death", "journeymap_all", "journeymap_default"
     ));
 
-        private static void writeCreateCommandsTxt(Path outDir, NbtElement root) throws IOException {
+    private static void writeCreateCommandsTxt(Path outDir, NbtElement root) throws IOException {
         // Build groupId -> groupName from root.groups
         Map<String,String> groupNames = new LinkedHashMap<>();
         NbtElement groupsComp = getCompoundChild(root, "groups");
@@ -482,36 +627,57 @@ public class WaypointDataDump {
             for (Map.Entry<String, NbtElement> we : wps.map.entrySet()) {
                 NbtElement wp = we.getValue();
                 String groupId = getStringChild(wp, "groupId");
-                if (groupId == null) groupId = "journeymap_default";
+                if (groupId == null || groupId.isEmpty()) groupId = DEFAULT_GROUP_ID;
                 if (SYSTEM_GROUPS.contains(groupId)) continue;
 
-                String gname = groupNames.getOrDefault(groupId, groupId);
+                String gname = groupNames.getOrDefault(groupId, DEFAULT_GROUP_ID);
+                String titleCaseGroup = toTitleCase(gname);
                 String name  = getStringChild(wp, "name");
                 if (name == null || name.isEmpty()) name = "Unnamed";
 
-                // coords
-                String x = String.valueOf(getIntChild(wp, "x", 0));
-                String y = String.valueOf(getIntChild(wp, "y", 64));
-                String z = String.valueOf(getIntChild(wp, "z", 0));
+                // coords (with configurable offsets for Waystones group only)
+                int baseX = getCoordInt(wp, "x", 0);
+                int baseY = getCoordInt(wp, "y", 64);
+                int baseZ = getCoordInt(wp, "z", 0);
+                
+                // Apply offsets only for Waystones group
+                if ("waystones".equalsIgnoreCase(titleCaseGroup)) {
+                    baseY += Y_OFFSET;
+                    baseZ += Z_OFFSET;
+                }
+                
+                String x = String.valueOf(baseX);
+                String y = String.valueOf(baseY);
+                String z = String.valueOf(baseZ);
 
                 // dimension
                 String dim = getStringChild(wp, "primaryDimension");
                 if (dim == null || dim.isEmpty()) dim = "minecraft:overworld";
 
-                // color
-                String color;
+                // color → map to a valid name
+                String colorName;
                 NbtElement colorEl = getChild(wp, "color");
-                if (colorEl != null && (colorEl.value instanceof Number)) {
-                    color = String.valueOf(((Number) colorEl.value).intValue());
+                if (colorEl != null) {
+                    colorName = mapColor(colorEl.value);
                 } else {
-                    color = getStringChild(wp, "color");
-                    if (color == null || color.isEmpty()) color = "white";
+                    colorName = "white";
                 }
-
+                
                 // build command
-                String prefixedName = ("[" + gname + "] " + name).replace("\"", "\\\"");
-                String cmd = String.format("/waypoint create \"%s\" %s %s %s %s %s",
-                        prefixedName, dim, x, y, z, color);
+                String prefixedName;
+                if (name.startsWith("[") && name.contains("]")) {
+                    // Waypoint already has a prefix, use it as-is
+                    prefixedName = name.replace("\"", "\\\"");
+                } else {
+                    // Add group prefix
+                    prefixedName = ("[" + titleCaseGroup + "] " + name).replace("\"", "\\\"");
+                }
+                String player = DEFAULT_PLAYER; // "" = whoever runs the command
+                String cmd = String.format(
+                    "waypoint create \"%s\" %s %s %s %s %s%s",
+                    prefixedName, dim, x, y, z, colorName,
+                    (player == null || player.isEmpty()) ? "" : " " + player
+                );
 
                 cmdsByGroupName.computeIfAbsent(gname, k -> new ArrayList<>()).add(cmd);
                 total++;
