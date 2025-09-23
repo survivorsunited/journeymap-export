@@ -23,6 +23,10 @@ System groups (`journeymap_temp`, `journeymap_death`, `journeymap_all`, `journey
 - **Selective coordinate offsets**: 
   - Applies Y-3 and Z-1 offsets only to "Waystones" group waypoints
   - Other waypoint groups maintain original coordinates
+- **Dimension suffixes for Waystones**:
+  - The End waystones get "(E)" suffix
+  - The Nether waystones get "(N)" suffix
+  - Overworld waystones have no suffix
 - **Multiple export formats**:
   - `waypoints.json` — Complete NBT data as structured JSON
   - `waypoints.csv` — Tabular data for spreadsheet analysis
@@ -128,13 +132,14 @@ Default behavior:
 ```text
 # Group: Farm
 
-waypoint create "[Farm] Wheat Field" minecraft:overworld 100 67 200 white MrWild0ne
+waypoint create "[Farm] Wheat Field" minecraft:overworld 100 64 200 white MrWild0ne
 waypoint create "[Farm] Animal Pen" minecraft:overworld 150 64 250 green MrWild0ne
 
 # Group: Waystones
 
-waypoint create "[Waystones] Village Stone" minecraft:overworld 200 61 300 blue MrWild0ne
-waypoint create "[Waystones] Nether Portal" minecraft:the_nether 50 58 75 red MrWild0ne
+waypoint create "[Waystones] Village Stone" minecraft:overworld 200 61 299 blue MrWild0ne
+waypoint create "[Waystones] Nether Portal (N)" minecraft:the_nether 50 58 74 red MrWild0ne
+waypoint create "[Waystones] End Portal (E)" minecraft:the_end 100 64 200 purple MrWild0ne
 
 # Group: Global
 
@@ -145,6 +150,7 @@ waypoint create "[Global] Spawn Point" minecraft:overworld 0 64 0 yellow MrWild0
 
 - **Title case group names**: "farm" → "Farm", "waystones" → "Waystones"
 - **Selective coordinate offsets**: Waystones have Y-3 and Z-1 applied (200,64,300 → 200,61,299)
+- **Dimension suffixes**: Waystones get "(E)" for The End, "(N)" for The Nether, no suffix for Overworld
 - **Preserved prefixes**: Existing "[Farm]" prefixes are maintained
 - **Default group**: Waypoints without groups get "Global" prefix
 - **Color mapping**: RGB values converted to named colors (white, green, blue, red, yellow)
@@ -156,6 +162,7 @@ waypoint create "[Global] Spawn Point" minecraft:overworld 0 64 0 yellow MrWild0
 - **Group handling**: Groups are taken from JourneyMap's saved data and converted to title case
 - **System groups**: `journeymap_temp`, `journeymap_death`, `journeymap_all`, `journeymap_default` are automatically filtered out
 - **Coordinate offsets**: Only applied to "Waystones" group waypoints (Y-3, Z-1 by default)
+- **Dimension suffixes**: Waystones automatically get dimension indicators: "(E)" for The End, "(N)" for The Nether
 - **Prefix preservation**: Waypoints with existing prefixes (e.g., "[Farm]") keep their original names
 - **Default grouping**: Waypoints without groups are assigned to "Global" group
 - **Color mapping**: RGB values are converted to nearest named colors for better readability
