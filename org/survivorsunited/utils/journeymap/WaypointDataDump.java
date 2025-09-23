@@ -683,8 +683,12 @@ public class WaypointDataDump {
                 String y = String.valueOf(baseY);
                 String z = String.valueOf(baseZ);
 
-                // dimension
-                String dim = getStringChild(wp, "primaryDimension");
+                // dimension (from pos.dimension)
+                String dim = null;
+                NbtElement pos = getCompoundChild(wp, "pos");
+                if (pos != null) {
+                    dim = getStringChild(pos, "dimension");
+                }
                 if (dim == null || dim.isEmpty()) dim = "minecraft:overworld";
 
                 // color → map to a valid name
