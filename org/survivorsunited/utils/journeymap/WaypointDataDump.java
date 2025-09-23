@@ -700,7 +700,7 @@ public class WaypointDataDump {
                     colorName = "white";
                 }
                 
-                // build command with smart prefix handling
+                // build command with smart prefix handling and dimension suffixes for Waystones
                 String prefixedName;
                 if (name.startsWith("[") && name.contains("]")) {
                     // Waypoint already has a prefix (e.g., "[Farm] Wheat Field"), use it as-is
@@ -708,6 +708,18 @@ public class WaypointDataDump {
                 } else {
                     // Add group prefix (e.g., "Wheat Field" → "[Farm] Wheat Field")
                     prefixedName = ("[" + titleCaseGroup + "] " + name).replace("\"", "\\\"");
+                }
+                
+                // Add dimension suffix for Waystones group
+                if ("waystones".equalsIgnoreCase(titleCaseGroup)) {
+                    String dimSuffix = "";
+                    if (dim.contains("the_end")) {
+                        dimSuffix = " (E)";
+                    } else if (dim.contains("the_nether")) {
+                        dimSuffix = " (N)";
+                    }
+                    // No suffix for overworld
+                    prefixedName = prefixedName + dimSuffix;
                 }
                 String player = DEFAULT_PLAYER; // "" = whoever runs the command
                 String cmd = String.format(
